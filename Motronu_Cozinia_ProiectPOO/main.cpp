@@ -170,6 +170,8 @@ public:
 };
 int Artist::totalArtisti = 0;
 
+class Melodie;
+
 class Album 
 {
 private:
@@ -304,6 +306,8 @@ public:
             }
         }
     }
+    //Friend function
+    friend void afisareAlbumMelodii(Album& album, Melodie& melodie);
     //Destructor
     ~Album()
     {
@@ -326,8 +330,8 @@ public:
     //Constructorul default
     Melodie() : durata(4.0)
     {
-        this->nume = "Hello";
-        this->numeArtist = "Adele";
+        this->nume = "HellsBells";
+        this->numeArtist = "AC/DC";
         this->nrVersuri = 2;
         this->versuri = new std::string[this->nrVersuri]{ "VersulNr1", "VersulNr2" };
         nrTotalMelodii++;
@@ -449,6 +453,8 @@ public:
         }
         cout << endl;
     }
+    //Friend function
+    friend void afisareMelodieArist(Artist& artist, Melodie& melodie);
     //Destructor
     ~Melodie()
     {
@@ -457,7 +463,26 @@ public:
     }
 };
 int Melodie::nrTotalMelodii = 0;
-
+//Functii friend declarate in clase si implementate aici
+void afisareMelodieArist(Artist& artist, Melodie& melodie)
+{
+    if (artist.getNume() == melodie.getNumeArtist())
+    {
+        cout << "\n\nFriend function:\nArtistul " << artist.getNume() << " a compus melodia " << melodie.getNume() << "." << endl;
+    }
+}
+void afisareAlbumMelodii(Album& album, Melodie& melodie)
+{
+    string numeMelodie = melodie.getNume();
+    string* melodii = album.getNumeMelodii();
+    for (int i = 0; i < album.getNrMelodii(); i++)
+    {
+        if (numeMelodie == melodii[i])
+        {
+            cout << "\n\nFriend function:\nMelodia " << numeMelodie << " face parte din albumul " << album.getNume() << "." << endl;
+        }
+    }
+}
 
 int main() 
 {
@@ -495,7 +520,7 @@ int main()
     cout << "An aparitie: " << artistGetSet.getAnAparitie() << endl;
     cout << "Avere: " << artistGetSet.getAvereEuro() << "M euro" << endl;
     cout << "Nr genuri muzicale: " << artistGetSet.getNrGenuriMuzicale() << endl;
-    string* artistGenres = artistCult.getGenuriMuzicale();
+    string* artistGenres = artistGetSet.getGenuriMuzicale();
     cout << "Genuri muzicale: ";
     for (int i = 0; i < artistCult.getNrGenuriMuzicale(); i++)
     {
@@ -567,7 +592,7 @@ int main()
     Melodie melodieGetSet;
     //Set
     melodieGetSet.setNume("Rolling in the Deep");
-    melodieGetSet.setNumeArtist("Adele Adkins");
+    melodieGetSet.setNumeArtist("Adele");
     melodieGetSet.setNrVersuri(3);
     melodieGetSet.setVersuri(versuriArray);
     //Get
@@ -582,6 +607,8 @@ int main()
     {
         cout << melodie[i] << "\n";
     }
+    afisareMelodieArist(adele, melodieGetSet);
+    afisareAlbumMelodii(albumulDoi, melodieImplicita);
 
     cout << "\n\nTotal Melodii: " << Melodie::getNrTotalMelodii() << endl;
 
