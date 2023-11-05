@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-class Artist 
+class Artist
 {
 private:
     const int anAparitie;
@@ -35,14 +35,14 @@ public:
         this->avereEuro = avereEuro;
         this->nrGenuriMuzicale = nrGenuriMuzicale;
         this->genuriMuzicale = new string[this->nrGenuriMuzicale];
-        for (int i = 0; i < this->nrGenuriMuzicale; ++i) 
+        for (int i = 0; i < this->nrGenuriMuzicale; ++i)
         {
             this->genuriMuzicale[i] = genuriMuzicale[i];
         }
         totalArtisti++;
     }
     //Constructorul cu 2 parametrii
-    Artist(string nume, int varsta): anAparitie(1953)
+    Artist(string nume, int varsta) : anAparitie(1953)
     {
         this->nume = nume;
         this->varsta = varsta;
@@ -72,17 +72,10 @@ public:
         }
         return *this;
     }
-    void afisare() 
-    {
-        cout << "Nume artist: " << this->nume << "\nVarsta: " << this->varsta << "\nAn aparitie: " << this->anAparitie << "\nAvere: " << this->avereEuro << "M euro\nGenuri muzicale: ";
-        for (int i = 0; i < this->nrGenuriMuzicale; i++) 
-        {
-            cout << genuriMuzicale[i] << " ";
-        }
-        cout << "\n\n";
-    }
-    //Getteri
-    static int getTotalArtisti() 
+    friend ostream& operator<<(ostream& os, const Artist& artist);
+    friend bool operator>(Artist& artist1, Artist& artist2);
+    friend istream& operator>>(istream& input, Artist& artist);
+    static int getTotalArtisti()
     {
         return totalArtisti;
     }
@@ -146,20 +139,20 @@ public:
             this->nrGenuriMuzicale = _nrGenuriMuzicale;
         }
     }
-   void setGenuriMuzicale(string* _genuriMuzicale)
+    void setGenuriMuzicale(string* _genuriMuzicale)
     {
-       if (_genuriMuzicale != NULL)
-       {
-           if (this->genuriMuzicale != NULL)
-           {
-               delete[]this->genuriMuzicale;
-           }
-           this->genuriMuzicale = new string[nrGenuriMuzicale];
-           for (int i = 0; i < nrGenuriMuzicale; i++)
-           {
-               this->genuriMuzicale[i] = _genuriMuzicale[i];
-           }
-       }
+        if (_genuriMuzicale != NULL)
+        {
+            if (this->genuriMuzicale != NULL)
+            {
+                delete[]this->genuriMuzicale;
+            }
+            this->genuriMuzicale = new string[nrGenuriMuzicale];
+            for (int i = 0; i < nrGenuriMuzicale; i++)
+            {
+                this->genuriMuzicale[i] = _genuriMuzicale[i];
+            }
+        }
     }
     //Destructor
     ~Artist()
@@ -172,7 +165,7 @@ int Artist::totalArtisti = 0;
 
 class Melodie;
 
-class Album 
+class Album
 {
 private:
     const int anLansare;
@@ -189,7 +182,7 @@ public:
 
     }
     //Constructorul cu 2 parametrii
-    Album(string nume, float pret): anLansare(1980)
+    Album(string nume, float pret) : anLansare(1980)
     {
         this->nume = nume;
         this->nrMelodii = 3;
@@ -197,13 +190,13 @@ public:
         this->numeMelodii = new string[this->nrMelodii]{ "HellsBells", "ShootToThrill", "BackInBlack" };
     }
     //Constructorul cu toti parametrii
-    Album(string nume, int nrMelodii, float pret, string* numeMelodii): anLansare(2022)
+    Album(string nume, int nrMelodii, float pret, string* numeMelodii) : anLansare(2022)
     {
         this->nume = nume;
         this->nrMelodii = nrMelodii;
         this->pret = pret;
         this->numeMelodii = new string[this->nrMelodii];
-        for (int i = 0; i < nrMelodii; ++i) 
+        for (int i = 0; i < nrMelodii; ++i)
         {
             this->numeMelodii[i] = numeMelodii[i];
         }
@@ -265,7 +258,7 @@ public:
     //Setteri
     static void setTVA(int _TVA)
     {
-        if (_TVA >=0)
+        if (_TVA >= 0)
         {
             TVA = _TVA;
         }
@@ -308,6 +301,9 @@ public:
     }
     //Friend function
     friend void afisareAlbumMelodii(Album& album, Melodie& melodie);
+    friend ostream& operator<<(ostream& os, const Album& album);
+    friend bool operator>(Album& album1, Album& album2);
+    friend istream& operator>>(istream& input, Album& album);
     //Destructor
     ~Album()
     {
@@ -342,14 +338,14 @@ public:
         this->nume = nume;
         this->numeArtist = "Adele";
         this->nrVersuri = 4;
-        this->versuri = new std::string[this->nrVersuri]{ "Close enough to start a war", "All that I have is on the floor", "God only knows what we're fighting for", "All that I say, you always say more"};
+        this->versuri = new std::string[this->nrVersuri]{ "Close enough to start a war", "All that I have is on the floor", "God only knows what we're fighting for", "All that I say, you always say more" };
 
         nrTotalMelodii++;
     }
     //Constructorul cu toti parametrii
-    Melodie(float durata, string nume, string numeArtist, int nrVersuri, string* versuriArray): durata(durata), nume(nume), numeArtist(numeArtist), nrVersuri(nrVersuri), versuri(new string[nrVersuri])
+    Melodie(float durata, string nume, string numeArtist, int nrVersuri, string* versuriArray) : durata(durata), nume(nume), numeArtist(numeArtist), nrVersuri(nrVersuri), versuri(new string[nrVersuri])
     {
-        for (int i = 0; i < nrVersuri; ++i) 
+        for (int i = 0; i < nrVersuri; ++i)
         {
             this->versuri[i] = versuriArray[i];
         }
@@ -403,7 +399,7 @@ public:
     //Setteri
     static void setNrtotalMelodii(int _nrTotalMelodii)
     {
-        if (_nrTotalMelodii >=0)
+        if (_nrTotalMelodii >= 0)
         {
             nrTotalMelodii = _nrTotalMelodii;
         }
@@ -455,6 +451,9 @@ public:
     }
     //Friend function
     friend void afisareMelodieArist(Artist& artist, Melodie& melodie);
+    friend ostream& operator<<(ostream& os, const Melodie& melodie);
+    friend bool operator>(Melodie& melodie1, Melodie& melodie2);
+    friend bool operator!=(Melodie& melodie1, Melodie& melodie2);
     //Destructor
     ~Melodie()
     {
@@ -463,12 +462,72 @@ public:
     }
 };
 int Melodie::nrTotalMelodii = 0;
+
 //Functii friend declarate in clase si implementate aici
 void afisareMelodieArist(Artist& artist, Melodie& melodie)
 {
     if (artist.getNume() == melodie.getNumeArtist())
     {
         cout << "\n\nFriend function:\nArtistul " << artist.getNume() << " a compus melodia " << melodie.getNume() << "." << endl;
+    }
+}
+//Supraincarcarea operatorului << pentru afisarea obiectului de tip Melodie
+ostream& operator<<(ostream& print, const Melodie& melodie)
+{
+    print << "Nume melodie: " << melodie.nume << "\nNume artist: " << melodie.numeArtist << "\nDurata: " << melodie.durata << " minute\nVersuri:\n";
+    for (int i = 0; i < melodie.nrVersuri; ++i)
+    {
+        print << melodie.versuri[i] << "\n";
+    }
+    print << endl;
+    return print;
+}
+//Supraincarcarea operatorului << pentru afisarea obiectului de tip Artist
+ostream& operator<<(ostream& print, const Artist& artist)
+{
+    print << "Nume artist: " << artist.nume << "\nVarsta: " << artist.varsta << "\nAn aparitie: " << artist.anAparitie << "\nAvere: " << artist.avereEuro << "M euro\nGenuri muzicale: ";
+    for (int i = 0; i < artist.nrGenuriMuzicale; i++)
+    {
+        print << artist.genuriMuzicale[i] << " ";
+    }
+    print << "\n\n";
+    return print;
+}
+//Supraincarcarea operatorului > pentru compararea varstei a doi artisti
+bool operator>(Artist& artist1, Artist& artist2)
+{
+    if (artist1.varsta > artist2.varsta)
+    {
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
+
+}
+//Supraincarcarea operatorului > pentru compararea duratei a doua melodii
+bool operator>(Melodie& melodie1, Melodie& melodie2)
+{
+    if (melodie1.durata > melodie2.durata)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+//Supraincarcarea operatorului != pentru compararea numelui artistului
+bool operator!=(Melodie& melodie1, Melodie& melodie2)
+{
+    if (melodie1.numeArtist != melodie2.numeArtist)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
 void afisareAlbumMelodii(Album& album, Melodie& melodie)
@@ -483,8 +542,91 @@ void afisareAlbumMelodii(Album& album, Melodie& melodie)
         }
     }
 }
+//Supraincarcarea operatorului << pentru afisarea obiectului de tip Album
+ostream& operator<<(ostream& print, const Album& album)
+{
+    print << "Nume album: " << album.nume << "\nAn lansare: " << album.anLansare << "\nNumar melodii: " << album.nrMelodii << "\nPret: " << album.pret << " RON\nMelodii: ";
+    for (int i = 0; i < album.nrMelodii; ++i) {
+        print << album.numeMelodii[i] << " ";
+    }
+    print << "\n\n";
+    return print;
+}
+//Supraincarcarea operatorului > pentru compararea numarului de melodiilor din cele 2 albume
+bool operator>(Album& album1, Album& album2)
+{
+    if (album1.nrMelodii > album2.nrMelodii)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+//Supraincarcarea operatorului >> pentru citirea unui obict de tip Album
+istream& operator>>(istream& input, Album& album)
+{
+    int _nrMelodii, _anLansare;
+    float _pret;
+    string _nume;
+    string* _numeMelodii;
 
-int main() 
+    cout << "Nume album: "; input >> _nume;
+    cout << "Pret: "; input >> _pret;
+    cout << "Numar melodii: "; input >> _nrMelodii;
+    _numeMelodii = new string[_nrMelodii];
+
+    for (int i = 0; i < _nrMelodii; i++)
+    {
+        cout << "Melodia " << i + 1 << ": ";
+        input >> _numeMelodii[i];
+    }
+
+    album.nume = _nume;
+    album.pret = _pret;
+    album.nrMelodii = _nrMelodii;
+    //Dezalocam memoria din heap in caz ca era ceva acolo
+    delete[] album.numeMelodii;
+    album.numeMelodii = _numeMelodii;
+
+    return input;
+}
+//Supraincarcarea operatorului >> pentru citirea unui obict de tip Artist
+istream& operator>>(istream& input, Artist& artist)
+{
+    int _varsta, _nrGenuriMuzicale;
+    float _avereEuro;
+    string _nume;
+    string* _genuriMuzicale;
+
+    cout << "Nume artist: "; input >> _nume;
+    cout << "Varsta: "; input >> _varsta;
+    cout << "Avere(euro): "; input >> _avereEuro;
+    cout << "Numar genuri muzicale: "; input >> _nrGenuriMuzicale;
+    _genuriMuzicale = new string[_nrGenuriMuzicale];
+
+    for (int i = 0; i < _nrGenuriMuzicale; i++)
+    {
+        cout << "Genul " << i + 1 << ": ";
+        input >> _genuriMuzicale[i];
+    }
+
+    artist.nume = _nume;
+    artist.varsta = _varsta;
+    artist.avereEuro = _avereEuro;
+    artist.nrGenuriMuzicale = _nrGenuriMuzicale;
+    //Dezalocam memoria din heap in caz ca era ceva acolo
+    delete[] artist.genuriMuzicale;
+    artist.genuriMuzicale = _genuriMuzicale;
+
+    return input;
+}
+
+
+
+
+int main()
 {
     //Artist
     string adeleGenuriMuzicale[] = { "Pop", "Rock" };
@@ -498,12 +640,12 @@ int main()
     Artist copyAdele;
     //Apelarea constructorului de copiere
     copyAdele = adele;
-
-    adele.afisare();
-    elvis.afisare();
-    artistCult.afisare();
+    //Supraincarcarea operatorului >> pentru a afisa un obiect de tip Artist
+    cout << adele;
+    cout << elvis;
+    cout << artistCult;
     cout << "Copy constructor:\n";
-    copyAdele.afisare();
+    cout << copyAdele;
 
     //Getteri si setteri
     Artist artistGetSet;
@@ -527,9 +669,25 @@ int main()
         cout << artistGenres[i] << " ";
     }
 
-    cout << "\n\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
+    //Supraincarcarea operatorului > pentru a compara varsta a doi artisti
+    cout << endl << endl;
+    if (adele > elvis)
+    {
+        cout << adele.getNume() << " este mai mare ca " << elvis.getNume() << endl;
+    }
+    else
+    {
+        cout << elvis.getNume() << " este mai mare ca " << adele.getNume() << endl;
+    }
 
+    //Supraincarcarea operatorului >>
+    Artist artistRandom;
+    cin >> artistRandom;
+    //Afisarea artistului citit de la tastatura
+    cout << endl;
+    cout << artistRandom;
 
+    cout << "\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
 
     //Album
     string numeMelodii[] = { "SpeakToMe", "Breathe(InTheAir)", "BrainDamage" };
@@ -544,7 +702,10 @@ int main()
     //Apelarea constructorului de copiere
     copyAlbumUnu = albumulUnu;
 
-    albumulUnu.afisare();
+    //albumulUnu.afisare();
+    //Supraincarcarea operatorului >> pentru afisarea unui obiect de tip Album
+    cout << albumulUnu;
+
     albumulDoi.afisare();
     albumulTrei.afisare();
     cout << "Copy constructor:\n";
@@ -573,21 +734,41 @@ int main()
 
     cout << "\n\nTVA: " << Album::getTVA() << "%" << endl << endl;
 
+    //Supraincarcarea operatorului > pentru a compara numarul de melodii din cele doua albume
+    if (albumulUnu > albumulTrei)
+    {
+        cout << "Albumul " << albumulUnu.getNume() << " are mai multe melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
+    }
+    else
+    {
+        cout << "Albumul " << albumulUnu.getNume() << " are mai putine melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
+
+    }
+
+    Album readAlbum;
+    //Supraincarcarea operatorului >> pentru a citi un obiect de tip Album
+    cin >> readAlbum;
+    //Afisarea albumului
+    cout << endl;
+    cout << readAlbum;
+
 
     //Melodie
     string versuriArray[] = { "I'm Mr. Originality", "Come my way, come and see", "Let me be your fantasy" };
     //Apelarea constructorului default
     Melodie melodieImplicita;
-
+    //Supraincarcarea operatorului >> pentru afisarea obictului de tip Melodie
+    cout << melodieImplicita;
     //Apelarea constructorului cu 2 parametrii
     Melodie melodieCuDurataNume(4.10, "TurningTables");
+    cout << melodieCuDurataNume;
     //Apelarea constructorului cu toti parametrii
-    Melodie mrOriginality(3.20,  "MrOriginality", "Simplu", 3, versuriArray);
-
+    Melodie mrOriginality(3.20, "MrOriginality", "Simplu", 3, versuriArray);
+    cout << mrOriginality;
     Melodie copyMelodieImplicita;
     //Apelarea constructorului de copiere
     copyMelodieImplicita = melodieImplicita;
-
+    cout << copyMelodieImplicita;
     //Getteri si setteri
     Melodie melodieGetSet;
     //Set
@@ -612,6 +793,28 @@ int main()
 
     cout << "\n\nTotal Melodii: " << Melodie::getNrTotalMelodii() << endl;
 
+    //Supraincarcarea operatorului > pentru a compara durata a doua melodii
+
+    if (melodieCuDurataNume > mrOriginality)
+    {
+        cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mare ca a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
+    }
+    else
+    {
+        cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mica fata de cea a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
+
+    }
+    //Supraincarcarea operatorului > pentru a compara daca doua melodii sunt interpretate de acelasi artist
+    if (melodieCuDurataNume != mrOriginality)
+    {
+        cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate artisti diferiti.\n" << endl;
+
+    }
+    else
+    {
+        cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate de acelasi artist, " << mrOriginality.getNumeArtist() << ".\n" << endl;
+
+    }
 
     return 0;
 }
