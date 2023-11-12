@@ -1,6 +1,9 @@
 ﻿#include <iostream>
 #include <string>
 using namespace std;
+#define LUNGIME_VECTOR 3
+#define LUNGIME_MATRICE_LINIE 2
+#define LUNGIME_MATRICE_COLOANA 3
 
 class Artist
 {
@@ -454,6 +457,7 @@ public:
     friend ostream& operator<<(ostream& os, const Melodie& melodie);
     friend bool operator>(Melodie& melodie1, Melodie& melodie2);
     friend bool operator!=(Melodie& melodie1, Melodie& melodie2);
+    friend istream& operator>>(istream& input, Melodie& melodie);
     //Destructor
     ~Melodie()
     {
@@ -622,6 +626,30 @@ istream& operator>>(istream& input, Artist& artist)
 
     return input;
 }
+//Supraincarcarea operatorului >> pentru citirea unui obict de tip Melodie
+istream& operator>>(istream& input, Melodie& melodie)
+{
+    string _nume;
+    string _numeArtist;
+    int _nrVersuri;
+    string* _versuri;
+    cout << "Nume melodie: "; input >> _nume;
+    cout << "Nume artist: "; input >> _numeArtist;
+    cout << "Numar versuri "; input >> _nrVersuri;
+    _versuri = new string[_nrVersuri];
+    for (int i = 0; i < _nrVersuri; i++)
+    {
+        cout << "Versul " << (i + 1) << ": ";
+        input >> _versuri[i];
+    }
+    melodie.nume = _nume;
+    melodie.numeArtist = _numeArtist;
+    melodie.nrVersuri = _nrVersuri;
+    //Dezalocam memoria din heap in caz ca era ceva acolo
+    delete[] melodie.versuri;
+    melodie.versuri = _versuri;
+    return input;
+}
 
 
 
@@ -688,6 +716,21 @@ int main()
     cout << artistRandom;
 
     cout << "\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
+    
+    //Vector artist
+    Artist vectorArtisti[LUNGIME_VECTOR];
+    cout << "Citirea obiectelor de tip artist:\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cin >> vectorArtisti[i];
+    }
+    //afisarea obiectelor din vector
+    cout << "Afisarea obiectelor de tip artist:\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cout << vectorArtisti[i] << endl;
+    }
+    
 
     //Album
     string numeMelodii[] = { "SpeakToMe", "Breathe(InTheAir)", "BrainDamage" };
@@ -734,6 +777,7 @@ int main()
 
     cout << "\n\nTVA: " << Album::getTVA() << "%" << endl << endl;
 
+
     //Supraincarcarea operatorului > pentru a compara numarul de melodii din cele doua albume
     if (albumulUnu > albumulTrei)
     {
@@ -752,6 +796,40 @@ int main()
     cout << endl;
     cout << readAlbum;
 
+    //Vector Album
+    Album vectorAlbume[LUNGIME_VECTOR];
+    cout << "Citirea obiectelor de tip album:\n\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cin >> vectorAlbume[i];
+    }
+    //afisarea obiectelor din vector
+    cout << "Afisarea obiectelor de tip album:\n\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cout << vectorAlbume[i] << endl;
+    }
+
+    //Matrice Album
+    Album matriceAlbume[LUNGIME_MATRICE_LINIE][LUNGIME_MATRICE_COLOANA];
+    cout << "Citirea unei matrice de tip album:\n\n";
+    for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
+    {
+        for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
+        {
+            cin >> matriceAlbume[i][j];
+        }
+    }
+    //afisarea obiectelor din vector
+    cout << "Afisarea matricei de tip album:\n\n";
+    for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
+    {
+        for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
+        {
+            cout << matriceAlbume[i][j];
+        }
+        cout << endl;
+    }
 
     //Melodie
     string versuriArray[] = { "I'm Mr. Originality", "Come my way, come and see", "Let me be your fantasy" };
@@ -814,6 +892,20 @@ int main()
     {
         cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate de acelasi artist, " << mrOriginality.getNumeArtist() << ".\n" << endl;
 
+    }
+
+    //Vector Melodie
+    Melodie vectorMelodii[LUNGIME_VECTOR];
+    cout << "Citirea obiectelor de tip artist:\n\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cin >> vectorMelodii[i];
+    }
+    //afisarea obiectelor din vector
+    cout << "Afisarea obiectelor de tip artist:\n\n";
+    for (int i = 0; i < LUNGIME_VECTOR; i++)
+    {
+        cout << vectorMelodii[i] << endl;
     }
 
     return 0;
