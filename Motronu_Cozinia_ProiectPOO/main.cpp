@@ -86,7 +86,7 @@ public:
     {
         return this->anAparitie;
     }
-    string getNume()
+    string getNume() const
     {
         return this->nume;
     }
@@ -157,6 +157,7 @@ public:
             }
         }
     }
+   
     //Destructor
     ~Artist()
     {
@@ -467,6 +468,68 @@ public:
 };
 int Melodie::nrTotalMelodii = 0;
 
+class Concert 
+{
+private:
+    Artist artist;
+    string data;
+    int participanti;
+public:
+    Concert()
+    {
+        this->artist;
+        this->data = "15.06.2024";
+        this->participanti = 1589324;
+    }
+
+    //setteri
+    void setArtistConcert(Artist a1)
+    {
+        this->artist = a1;
+    }
+    void setData(string data)
+    {
+        this->data = data;
+    }
+    void setParticipanti(int participanti)
+    {
+        this->participanti = participanti;
+    }
+    //getteri
+    Artist getArtist()
+    {
+        return this->artist;
+    }
+    string getData()
+    {
+        return this->data;
+    }
+    int getParticipanti()
+    {
+        return this->participanti;
+    }
+
+    Concert& operator=(Concert& c1)
+    {
+        if (this != &c1)
+        {
+            this->artist = c1.artist;
+            this->data = c1.data;
+            this->participanti = c1.participanti;
+        }
+        return *this;
+    }
+    friend ostream& operator<<(ostream& os, const Concert& c1);
+    friend istream& operator>>(istream& input, Concert& c1);
+
+    ~Concert()
+    {
+
+    }
+
+
+};
+
 //Functii friend declarate in clase si implementate aici
 void afisareMelodieArist(Artist& artist, Melodie& melodie)
 {
@@ -650,9 +713,31 @@ istream& operator>>(istream& input, Melodie& melodie)
     melodie.versuri = _versuri;
     return input;
 }
+//Supraincarcarea operatorului << pentru afisarea obiectului de tip Concert
+ostream& operator<<(ostream& print, const Concert& c1)
+{
+    print << c1.artist.getNume() << " a avut un concert in data de " << c1.data << " la care au participat " << c1.participanti << " de oameni.\n";
+    return print;
+}
+//Supraincarcarea operatorului << pentru citirea unui obiect de tip Concert
+istream& operator>>(istream& input, Concert& c1)
+{
+    Artist a1;
+    string numeArtist;
+    string dataConcert;
+    int participanti;
+    cout << "Nume artist: ";
+    input >> numeArtist;
+    cout << "Data concert: ";
+    input >> dataConcert;
+    cout << "Nr participanti: ";
+    input >> participanti;
+    c1.artist.setNume(numeArtist);
+    c1.data = dataConcert;
+    c1.participanti = participanti;
 
-
-
+    return input;
+}
 
 int main()
 {
@@ -820,7 +905,7 @@ int main()
             cin >> matriceAlbume[i][j];
         }
     }
-    //afisarea obiectelor din vector
+    //afisarea obiectelor din martice
     cout << "Afisarea matricei de tip album:\n\n";
     for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
     {
@@ -907,6 +992,12 @@ int main()
     {
         cout << vectorMelodii[i] << endl;
     }
+
+    Concert c1;
+    cin >> c1;
+    cout << c1;
+    Concert c2;
+    c2 = c1;
 
     return 0;
 }
