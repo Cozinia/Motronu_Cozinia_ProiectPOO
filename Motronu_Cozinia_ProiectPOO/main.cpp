@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <fstream>
 using namespace std;
 #define LUNGIME_VECTOR 3
 #define LUNGIME_MATRICE_LINIE 2
@@ -459,6 +460,7 @@ public:
     friend bool operator>(Melodie& melodie1, Melodie& melodie2);
     friend bool operator!=(Melodie& melodie1, Melodie& melodie2);
     friend istream& operator>>(istream& input, Melodie& melodie);
+    friend ifstream& operator>>(ifstream& input, Melodie& melodie);
     //Destructor
     ~Melodie()
     {
@@ -541,7 +543,7 @@ void afisareMelodieArist(Artist& artist, Melodie& melodie)
 //Supraincarcarea operatorului << pentru afisarea obiectului de tip Melodie
 ostream& operator<<(ostream& print, const Melodie& melodie)
 {
-    print << "Nume melodie: " << melodie.nume << "\nNume artist: " << melodie.numeArtist << "\nDurata: " << melodie.durata << " minute\nVersuri:\n";
+    print << melodie.nume << "\n" << melodie.numeArtist << "\n" << melodie.durata << "\n";
     for (int i = 0; i < melodie.nrVersuri; ++i)
     {
         print << melodie.versuri[i] << "\n";
@@ -552,7 +554,7 @@ ostream& operator<<(ostream& print, const Melodie& melodie)
 //Supraincarcarea operatorului << pentru afisarea obiectului de tip Artist
 ostream& operator<<(ostream& print, const Artist& artist)
 {
-    print << "Nume artist: " << artist.nume << "\nVarsta: " << artist.varsta << "\nAn aparitie: " << artist.anAparitie << "\nAvere: " << artist.avereEuro << "M euro\nGenuri muzicale: ";
+    print << artist.nume << "\n" << artist.varsta << "\n" << artist.anAparitie << "\n" << artist.avereEuro << "\n";
     for (int i = 0; i < artist.nrGenuriMuzicale; i++)
     {
         print << artist.genuriMuzicale[i] << " ";
@@ -612,7 +614,7 @@ void afisareAlbumMelodii(Album& album, Melodie& melodie)
 //Supraincarcarea operatorului << pentru afisarea obiectului de tip Album
 ostream& operator<<(ostream& print, const Album& album)
 {
-    print << "Nume album: " << album.nume << "\nAn lansare: " << album.anLansare << "\nNumar melodii: " << album.nrMelodii << "\nPret: " << album.pret << " RON\nMelodii: ";
+    print <<album.nume << "\n" << album.anLansare << "\n" << album.nrMelodii << "\n" << album.pret << "\n";
     for (int i = 0; i < album.nrMelodii; ++i) {
         print << album.numeMelodii[i] << " ";
     }
@@ -713,6 +715,30 @@ istream& operator>>(istream& input, Melodie& melodie)
     melodie.versuri = _versuri;
     return input;
 }
+//to do
+ifstream& operator>>(ifstream& input, Melodie& melodie)
+{
+    string _nume;
+    string _numeArtist;
+    int _nrVersuri;
+    string space = " ";
+    string* _versuri;
+    input >> _nume;
+    input >> _numeArtist;
+    input >> _nrVersuri;
+    _versuri = new string[_nrVersuri];
+    for (int i = 0; i < _nrVersuri; i++)
+    {
+        input >> _versuri[i] >> space;
+    }
+    melodie.nume = _nume;
+    melodie.numeArtist = _numeArtist;
+    melodie.nrVersuri = _nrVersuri;
+    //Dezalocam memoria din heap in caz ca era ceva acolo
+    delete[] melodie.versuri;
+    melodie.versuri = _versuri;
+    return input;
+}
 //Supraincarcarea operatorului << pentru afisarea obiectului de tip Concert
 ostream& operator<<(ostream& print, const Concert& c1)
 {
@@ -738,266 +764,496 @@ istream& operator>>(istream& input, Concert& c1)
 
     return input;
 }
+//Afisarea datelor de tip binar din fisierul artisti
+void afisareBinaryArtisti()
+{
+    Artist a1;
+    int anAparitie = a1.getAnAparitie();
+    int totalArtisti = a1.getTotalArtisti();
+    string nume = a1.getNume();
+    int varsta = a1.getVarsta();
+    float avereEuro = a1.getAvereEuro();
+    int nrGenuriMuzicale = a1.getNrGenuriMuzicale();
+    int sizeNume = nume.length();
+    string* genuriMuzicale = new string[nrGenuriMuzicale];
+    for (int i = 0; i < nrGenuriMuzicale; i++)
+    {
+        genuriMuzicale[i] = a1.getGenuriMuzicale()[i];
+    }
+
+    ifstream afisareBinaryArtisti("artisti.bin", ios::binary);
+
+    if (afisareBinaryArtisti.is_open())
+    {
+        afisareBinaryArtisti.read((char*)&anAparitie, sizeof(int));
+        afisareBinaryArtisti.read((char*)&totalArtisti, sizeof(int));
+        afisareBinaryArtisti.read((char*)&sizeNume, sizeof(int));
+
+        nume.resize(sizeNume);
+        afisareBinaryArtisti.read(&nume[0], sizeNume);
+
+        afisareBinaryArtisti.read((char*)&varsta, sizeof(int));
+        afisareBinaryArtisti.read((char*)&avereEuro, sizeof(float));
+
+        for (int i = 0; i < nrGenuriMuzicale; i++)
+        {
+            int strSize;
+            afisareBinaryArtisti.read((char*)&strSize, sizeof(int));
+            genuriMuzicale[i].resize(strSize);
+            afisareBinaryArtisti.read(&genuriMuzicale[i][0], strSize);
+        }
+
+        afisareBinaryArtisti.close();
+
+        cout << "Nume artist: " << nume << "\nVarsta: " << varsta << "\nAn aparitie: " << anAparitie << "\nAvere: " << avereEuro << "M euro\nGenuri muzicale: ";
+        for (int i = 0; i < nrGenuriMuzicale; i++)
+        {
+            cout << genuriMuzicale[i] << " ";
+        }
+        cout << "\n\n";
+
+        delete[] genuriMuzicale;
+    }
+    else
+    {
+        cout << "Nu am putut deschide fisierul binar :(\n";
+        delete[] genuriMuzicale;
+    }
+}
+//Citirea datelor de tip binar din fisierul artisti
+void citireBinaryArtisti()
+{
+    Artist a1;
+    int anAparitie = a1.getAnAparitie();
+    int totalArtisti = a1.getTotalArtisti();
+    string nume = a1.getNume();
+    int varsta = a1.getVarsta();
+    float avereEuro = a1.getAvereEuro();
+    int nrGenuriMuzicale = a1.getNrGenuriMuzicale();
+    int sizeNume = nume.length();
+    string* genuriMuzicale = new string[nrGenuriMuzicale];
+    for (int i = 0; i < nrGenuriMuzicale; i++)
+    {
+        genuriMuzicale[i] = a1.getGenuriMuzicale()[i];
+    }
+
+    fstream citireBinaryArtisti("artisti.bin", ios::binary | ios::out);
+
+    if (citireBinaryArtisti.is_open())
+    {
+        citireBinaryArtisti.write((char*)&anAparitie, sizeof(int));
+        citireBinaryArtisti.write((char*)&totalArtisti, sizeof(int));
+        citireBinaryArtisti.write((char*)&sizeNume, sizeof(int));
+        citireBinaryArtisti.write(&nume[0], sizeNume);
+
+        citireBinaryArtisti.write((char*)&varsta, sizeof(int));
+        citireBinaryArtisti.write((char*)&avereEuro, sizeof(float));
+
+        for (int i = 0; i < nrGenuriMuzicale; i++)
+        {
+            int strSize = genuriMuzicale[i].length();
+            citireBinaryArtisti.write((char*)&strSize, sizeof(int));
+            citireBinaryArtisti.write(&genuriMuzicale[i][0], strSize);
+        }
+
+        citireBinaryArtisti.close();
+        delete[] genuriMuzicale;
+    }
+    else
+    {
+        cout << "Nu am putut deschide fisierul binar :(\n";
+        delete[] genuriMuzicale;
+    }
+}
+//Afisarea datelor de tip binar din fisierul melodii
+void afisareBinaryMelodii()
+{
+    Melodie m1;
+    float durata = m1.getDurata();
+    int nrTotalMelodii = m1.getNrTotalMelodii();
+    string nume = m1.getNume();
+    string numeArtist = m1.getNumeArtist();
+    int nrVersuri= m1.getNrVersuri();
+    string* versuri = new string[nrVersuri];
+    int sizeNume = nume.length();
+    for (int i = 0; i < nrVersuri; i++)
+    {
+        versuri[i] = m1.getVersuri()[i];
+    }
+
+   ifstream afisareBinaryMelodii("melodii.bin", ios::binary);
+
+if (afisareBinaryMelodii.is_open())
+{
+    afisareBinaryMelodii.read((char*)&durata, sizeof(float));
+    afisareBinaryMelodii.read((char*)&nrTotalMelodii, sizeof(int));
+    afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
+
+    nume.resize(sizeNume);
+    afisareBinaryMelodii.read(&nume[0], sizeNume);
+
+    afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
+    numeArtist.resize(sizeNume);
+    afisareBinaryMelodii.read(&numeArtist[0], sizeNume);
+
+    afisareBinaryMelodii.read((char*)&nrVersuri, sizeof(int));
+
+    // Read each verse
+    for (int i = 0; i < nrVersuri; i++)
+    {
+        int strSize;
+        afisareBinaryMelodii.read((char*)&strSize, sizeof(int));
+        versuri[i].resize(strSize);
+        afisareBinaryMelodii.read(&versuri[i][0], strSize);
+    }
+
+    afisareBinaryMelodii.close();
+
+    // Now you can use the read values as needed
+    cout << "Nume melodie: " << nume << "\nDurata: " << durata << " minutes\nArtist: " << numeArtist
+         << "\nTotal melodii: " << nrTotalMelodii << "\nVersuri: ";
+    for (int i = 0; i < nrVersuri; i++)
+    {
+        cout << versuri[i] << " ";
+    }
+
+    delete[] versuri;
+}
+else
+{
+    cout << "Nu am putut deschide fisierul :(\n";
+    delete[] versuri;
+}
+}
+//Citirea datelor de tip binar din fisierul melodii
+void citireBinaryMelodii()
+{
+    Melodie m1;
+    float durata = m1.getDurata();
+    int nrTotalMelodii = m1.getNrTotalMelodii();
+    string nume = m1.getNume();
+    string numeArtist = m1.getNumeArtist();
+    int nrVersuri = m1.getNrVersuri();
+    string* versuri = new string[nrVersuri];
+    int sizeNume = nume.length();
+    for (int i = 0; i < nrVersuri; i++)
+    {
+        versuri[i] = m1.getVersuri()[i];
+    }
+        ofstream citireBinaryMelodii("melodii.bin", ios::binary);
+
+    if (citireBinaryMelodii.is_open())
+    {
+        // Write data to the binary file
+        citireBinaryMelodii.write((char*)&durata, sizeof(float));
+        citireBinaryMelodii.write((char*)&nrTotalMelodii, sizeof(int));
+        citireBinaryMelodii.write((char*)&sizeNume, sizeof(int));
+        citireBinaryMelodii.write(nume.c_str(), sizeNume);
+
+        int sizeNumeArtist = numeArtist.length();
+        citireBinaryMelodii.write((char*)&sizeNumeArtist, sizeof(int));
+        citireBinaryMelodii.write(numeArtist.c_str(), sizeNumeArtist);
+
+        citireBinaryMelodii.write((char*)&nrVersuri, sizeof(int));
+
+        // Write each verse to the binary file
+        for (int i = 0; i < nrVersuri; i++)
+        {
+            int strSize = versuri[i].length();
+            citireBinaryMelodii.write((char*)&strSize, sizeof(int));
+            citireBinaryMelodii.write(versuri[i].c_str(), strSize);
+        }
+
+        citireBinaryMelodii.close();
+    }
+    else
+    {
+        cout << "Nu am putut deschide fisierul :(\n";
+    }
+
+    // Don't forget to free the allocated memory
+    delete[] versuri;
+}
+
 
 int main()
 {
-    //Artist
-    string adeleGenuriMuzicale[] = { "Pop", "Rock" };
-    //Apelarea constructorului cu toti parametrii
-    Artist adele("Adele", 35, 220.53, 2, adeleGenuriMuzicale, 2006);
-    //Apelarea constructorului cu 2 parametrii
-    Artist elvis("Elvis Presley", 40);
-    //Apelarea constructorului default
-    Artist artistCult;
+    ////Artist
+    //string adeleGenuriMuzicale[] = { "Pop", "Rock" };
+    ////Apelarea constructorului cu toti parametrii
+    //Artist adele("Adele", 35, 220.53, 2, adeleGenuriMuzicale, 2006);
+    ////Apelarea constructorului cu 2 parametrii
+    //Artist elvis("Elvis Presley", 40);
+    ////Apelarea constructorului default
+    //Artist artistCult;
 
-    Artist copyAdele;
-    //Apelarea constructorului de copiere
-    copyAdele = adele;
-    //Supraincarcarea operatorului >> pentru a afisa un obiect de tip Artist
-    cout << adele;
-    cout << elvis;
-    cout << artistCult;
-    cout << "Copy constructor:\n";
-    cout << copyAdele;
+    //Artist copyAdele;
+    ////Apelarea constructorului de copiere
+    //copyAdele = adele;
+    ////Supraincarcarea operatorului >> pentru a afisa un obiect de tip Artist
+    //cout << adele;
+    //cout << elvis;
+    //cout << artistCult;
+    //cout << "Copy constructor:\n";
+    //cout << copyAdele;
 
-    //Getteri si setteri
-    Artist artistGetSet;
-    //Set
-    artistGetSet.setNume("Bruno Mars");
-    artistGetSet.setAvereEuro(30.2);
-    artistGetSet.setNrGenuriMuzicale(2);
-    artistGetSet.setGenuriMuzicale(adeleGenuriMuzicale);
+    ////Getteri si setteri
+    //Artist artistGetSet;
+    ////Set
+    //artistGetSet.setNume("Bruno Mars");
+    //artistGetSet.setAvereEuro(30.2);
+    //artistGetSet.setNrGenuriMuzicale(2);
+    //artistGetSet.setGenuriMuzicale(adeleGenuriMuzicale);
 
-    //Get
-    cout << "Artist get & set:" << endl;
-    cout << "Nume artist: " << artistGetSet.getNume() << endl;
-    cout << "Varsta: " << artistGetSet.getVarsta() << endl;
-    cout << "An aparitie: " << artistGetSet.getAnAparitie() << endl;
-    cout << "Avere: " << artistGetSet.getAvereEuro() << "M euro" << endl;
-    cout << "Nr genuri muzicale: " << artistGetSet.getNrGenuriMuzicale() << endl;
-    string* artistGenres = artistGetSet.getGenuriMuzicale();
-    cout << "Genuri muzicale: ";
-    for (int i = 0; i < artistCult.getNrGenuriMuzicale(); i++)
-    {
-        cout << artistGenres[i] << " ";
-    }
+    ////Get
+    //cout << "Artist get & set:" << endl;
+    //cout << "Nume artist: " << artistGetSet.getNume() << endl;
+    //cout << "Varsta: " << artistGetSet.getVarsta() << endl;
+    //cout << "An aparitie: " << artistGetSet.getAnAparitie() << endl;
+    //cout << "Avere: " << artistGetSet.getAvereEuro() << "M euro" << endl;
+    //cout << "Nr genuri muzicale: " << artistGetSet.getNrGenuriMuzicale() << endl;
+    //string* artistGenres = artistGetSet.getGenuriMuzicale();
+    //cout << "Genuri muzicale: ";
+    //for (int i = 0; i < artistCult.getNrGenuriMuzicale(); i++)
+    //{
+    //    cout << artistGenres[i] << " ";
+    //}
 
-    //Supraincarcarea operatorului > pentru a compara varsta a doi artisti
-    cout << endl << endl;
-    if (adele > elvis)
-    {
-        cout << adele.getNume() << " este mai mare ca " << elvis.getNume() << endl;
-    }
-    else
-    {
-        cout << elvis.getNume() << " este mai mare ca " << adele.getNume() << endl;
-    }
+    ////Supraincarcarea operatorului > pentru a compara varsta a doi artisti
+    //cout << endl << endl;
+    //if (adele > elvis)
+    //{
+    //    cout << adele.getNume() << " este mai mare ca " << elvis.getNume() << endl;
+    //}
+    //else
+    //{
+    //    cout << elvis.getNume() << " este mai mare ca " << adele.getNume() << endl;
+    //}
 
-    //Supraincarcarea operatorului >>
-    Artist artistRandom;
-    cin >> artistRandom;
-    //Afisarea artistului citit de la tastatura
-    cout << endl;
-    cout << artistRandom;
+    ////Supraincarcarea operatorului >>
+    //Artist artistRandom;
+    //cin >> artistRandom;
+    ////Afisarea artistului citit de la tastatura
+    //cout << endl;
+    //cout << artistRandom;
 
-    cout << "\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
+    //cout << "\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
+    //
+    ////Vector artist
+    //Artist vectorArtisti[LUNGIME_VECTOR];
+    //cout << "Citirea obiectelor de tip artist:\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cin >> vectorArtisti[i];
+    //}
+    ////afisarea obiectelor din vector
+    //cout << "Afisarea obiectelor de tip artist:\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cout << vectorArtisti[i] << endl;
+    //}
+    //
+
+    ////Album
+    //string numeMelodii[] = { "SpeakToMe", "Breathe(InTheAir)", "BrainDamage" };
+    ////Apelarea constructorului default
+    //Album albumulUnu;
+    ////Apelarea constructorului cu toti parametrii
+    //Album albumulDoi("Back in Black", 29.99);
+    ////Apelarea constructorului cu toti parametrii
+    //Album albumulTrei("The Dark Side of the Moon", 3, 39.99, numeMelodii);
+
+    //Album copyAlbumUnu;
+    ////Apelarea constructorului de copiere
+    //copyAlbumUnu = albumulUnu;
+
+    ////albumulUnu.afisare();
+    ////Supraincarcarea operatorului >> pentru afisarea unui obiect de tip Album
+    //cout << albumulUnu;
+
+    //albumulDoi.afisare();
+    //albumulTrei.afisare();
+    //cout << "Copy constructor:\n";
+    //copyAlbumUnu.afisare();
+
+    ////Getteri si setteri
+    //Album albumGetSet;
+    ////Set
+    //albumGetSet.setNume("To the future");
+    //albumGetSet.setNrMelodii(10);
+    //albumGetSet.setPret(25.99);
+    //albumGetSet.setNrMelodii(3);
+    //albumGetSet.setNumeMelodii(numeMelodii);
+    ////Get
+    //cout << "Album get & set:" << endl;
+    //cout << "Nume album: " << albumGetSet.getNume() << endl;
+    //cout << "An lansare: " << albumGetSet.getAnLansare() << endl;
+    //cout << "Pret: " << albumGetSet.getPret() << " RON" << endl;
+    //cout << "Nr. melodii: " << albumGetSet.getNrMelodii() << endl;
+    //string* album = albumGetSet.getNumeMelodii();
+    //cout << "Melodii ";
+    //for (int i = 0; i < albumGetSet.getNrMelodii(); i++)
+    //{
+    //    cout << album[i] << " ";
+    //}
+
+    //cout << "\n\nTVA: " << Album::getTVA() << "%" << endl << endl;
+
+
+    ////Supraincarcarea operatorului > pentru a compara numarul de melodii din cele doua albume
+    //if (albumulUnu > albumulTrei)
+    //{
+    //    cout << "Albumul " << albumulUnu.getNume() << " are mai multe melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
+    //}
+    //else
+    //{
+    //    cout << "Albumul " << albumulUnu.getNume() << " are mai putine melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
+
+    //}
+
+    //Album readAlbum;
+    ////Supraincarcarea operatorului >> pentru a citi un obiect de tip Album
+    //cin >> readAlbum;
+    ////Afisarea albumului
+    //cout << endl;
+    //cout << readAlbum;
+
+    ////Vector Album
+    //Album vectorAlbume[LUNGIME_VECTOR];
+    //cout << "Citirea obiectelor de tip album:\n\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cin >> vectorAlbume[i];
+    //}
+    ////afisarea obiectelor din vector
+    //cout << "Afisarea obiectelor de tip album:\n\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cout << vectorAlbume[i] << endl;
+    //}
+
+    ////Matrice Album
+    //Album matriceAlbume[LUNGIME_MATRICE_LINIE][LUNGIME_MATRICE_COLOANA];
+    //cout << "Citirea unei matrice de tip album:\n\n";
+    //for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
+    //{
+    //    for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
+    //    {
+    //        cin >> matriceAlbume[i][j];
+    //    }
+    //}
+    ////afisarea obiectelor din martice
+    //cout << "Afisarea matricei de tip album:\n\n";
+    //for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
+    //{
+    //    for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
+    //    {
+    //        cout << matriceAlbume[i][j];
+    //    }
+    //    cout << endl;
+    //}
+
+    ////Melodie
+    //string versuriArray[] = { "I'm Mr. Originality", "Come my way, come and see", "Let me be your fantasy" };
+    ////Apelarea constructorului default
+    //Melodie melodieImplicita;
+    ////Supraincarcarea operatorului >> pentru afisarea obictului de tip Melodie
+    //cout << melodieImplicita;
+    ////Apelarea constructorului cu 2 parametrii
+    //Melodie melodieCuDurataNume(4.10, "TurningTables");
+    //cout << melodieCuDurataNume;
+    ////Apelarea constructorului cu toti parametrii
+    //Melodie mrOriginality(3.20, "MrOriginality", "Simplu", 3, versuriArray);
+    //cout << mrOriginality;
+    //Melodie copyMelodieImplicita;
+    ////Apelarea constructorului de copiere
+    //copyMelodieImplicita = melodieImplicita;
+    //cout << copyMelodieImplicita;
+    ////Getteri si setteri
+    //Melodie melodieGetSet;
+    ////Set
+    //melodieGetSet.setNume("Rolling in the Deep");
+    //melodieGetSet.setNumeArtist("Adele");
+    //melodieGetSet.setNrVersuri(3);
+    //melodieGetSet.setVersuri(versuriArray);
+    ////Get
+    //cout << "Melodie get & set:" << endl;
+    //cout << "Nume melodie: " << melodieGetSet.getNume() << endl;
+    //cout << "Nume artist: " << melodieGetSet.getNumeArtist() << endl;
+    //cout << "Durata: " << melodieGetSet.getDurata() << " minute" << endl;
+    //cout << "Nr. versuri: " << melodieGetSet.getNrVersuri() << endl;
+    //string* melodie = melodieGetSet.getVersuri();
+    //cout << "Versuri ";
+    //for (int i = 0; i < melodieGetSet.getNrVersuri(); i++)
+    //{
+    //    cout << melodie[i] << "\n";
+    //}
+    //afisareMelodieArist(adele, melodieGetSet);
+    //afisareAlbumMelodii(albumulDoi, melodieImplicita);
+
+    //cout << "\n\nTotal Melodii: " << Melodie::getNrTotalMelodii() << endl;
+
+    ////Supraincarcarea operatorului > pentru a compara durata a doua melodii
+
+    //if (melodieCuDurataNume > mrOriginality)
+    //{
+    //    cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mare ca a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
+    //}
+    //else
+    //{
+    //    cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mica fata de cea a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
+
+    //}
+    ////Supraincarcarea operatorului > pentru a compara daca doua melodii sunt interpretate de acelasi artist
+    //if (melodieCuDurataNume != mrOriginality)
+    //{
+    //    cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate artisti diferiti.\n" << endl;
+
+    //}
+    //else
+    //{
+    //    cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate de acelasi artist, " << mrOriginality.getNumeArtist() << ".\n" << endl;
+
+    //}
+
+    ////Vector Melodie
+    //Melodie vectorMelodii[LUNGIME_VECTOR];
+    //cout << "Citirea obiectelor de tip artist:\n\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cin >> vectorMelodii[i];
+    //}
+    ////afisarea obiectelor din vector
+    //cout << "Afisarea obiectelor de tip artist:\n\n";
+    //for (int i = 0; i < LUNGIME_VECTOR; i++)
+    //{
+    //    cout << vectorMelodii[i] << endl;
+    //}
+
+    //Concert c1;
+    //cin >> c1;
+    //cout << c1;
+    //Concert c2;
+    //c2 = c1;
+
+    Artist artist5;
+    Melodie melodie5;
+
+    ofstream afisareTextArtisti("artisti.txt", ios::out);
+    afisareTextArtisti << artist5;
+    ifstream citireTextArtisti("artisti.txt", ios::in);   
     
-    //Vector artist
-    Artist vectorArtisti[LUNGIME_VECTOR];
-    cout << "Citirea obiectelor de tip artist:\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cin >> vectorArtisti[i];
-    }
-    //afisarea obiectelor din vector
-    cout << "Afisarea obiectelor de tip artist:\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cout << vectorArtisti[i] << endl;
-    }
-    
+    ofstream afisareTextMelodii("melodii.txt", ios::out);
+    afisareTextMelodii << melodie5;
+    ifstream citireTextMelodii("melodii.txt", ios::in);
 
-    //Album
-    string numeMelodii[] = { "SpeakToMe", "Breathe(InTheAir)", "BrainDamage" };
-    //Apelarea constructorului default
-    Album albumulUnu;
-    //Apelarea constructorului cu toti parametrii
-    Album albumulDoi("Back in Black", 29.99);
-    //Apelarea constructorului cu toti parametrii
-    Album albumulTrei("The Dark Side of the Moon", 3, 39.99, numeMelodii);
+   
+    citireBinaryArtisti();
+    afisareBinaryArtisti();
 
-    Album copyAlbumUnu;
-    //Apelarea constructorului de copiere
-    copyAlbumUnu = albumulUnu;
+    citireBinaryMelodii();
+    afisareBinaryMelodii();
 
-    //albumulUnu.afisare();
-    //Supraincarcarea operatorului >> pentru afisarea unui obiect de tip Album
-    cout << albumulUnu;
-
-    albumulDoi.afisare();
-    albumulTrei.afisare();
-    cout << "Copy constructor:\n";
-    copyAlbumUnu.afisare();
-
-    //Getteri si setteri
-    Album albumGetSet;
-    //Set
-    albumGetSet.setNume("To the future");
-    albumGetSet.setNrMelodii(10);
-    albumGetSet.setPret(25.99);
-    albumGetSet.setNrMelodii(3);
-    albumGetSet.setNumeMelodii(numeMelodii);
-    //Get
-    cout << "Album get & set:" << endl;
-    cout << "Nume album: " << albumGetSet.getNume() << endl;
-    cout << "An lansare: " << albumGetSet.getAnLansare() << endl;
-    cout << "Pret: " << albumGetSet.getPret() << " RON" << endl;
-    cout << "Nr. melodii: " << albumGetSet.getNrMelodii() << endl;
-    string* album = albumGetSet.getNumeMelodii();
-    cout << "Melodii ";
-    for (int i = 0; i < albumGetSet.getNrMelodii(); i++)
-    {
-        cout << album[i] << " ";
-    }
-
-    cout << "\n\nTVA: " << Album::getTVA() << "%" << endl << endl;
-
-
-    //Supraincarcarea operatorului > pentru a compara numarul de melodii din cele doua albume
-    if (albumulUnu > albumulTrei)
-    {
-        cout << "Albumul " << albumulUnu.getNume() << " are mai multe melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
-    }
-    else
-    {
-        cout << "Albumul " << albumulUnu.getNume() << " are mai putine melodii (" << albumulUnu.getNrMelodii() << ") fata de albumul " << albumulTrei.getNume() << " (" << albumulDoi.getNrMelodii() << ") " << endl << endl;
-
-    }
-
-    Album readAlbum;
-    //Supraincarcarea operatorului >> pentru a citi un obiect de tip Album
-    cin >> readAlbum;
-    //Afisarea albumului
-    cout << endl;
-    cout << readAlbum;
-
-    //Vector Album
-    Album vectorAlbume[LUNGIME_VECTOR];
-    cout << "Citirea obiectelor de tip album:\n\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cin >> vectorAlbume[i];
-    }
-    //afisarea obiectelor din vector
-    cout << "Afisarea obiectelor de tip album:\n\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cout << vectorAlbume[i] << endl;
-    }
-
-    //Matrice Album
-    Album matriceAlbume[LUNGIME_MATRICE_LINIE][LUNGIME_MATRICE_COLOANA];
-    cout << "Citirea unei matrice de tip album:\n\n";
-    for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
-    {
-        for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
-        {
-            cin >> matriceAlbume[i][j];
-        }
-    }
-    //afisarea obiectelor din martice
-    cout << "Afisarea matricei de tip album:\n\n";
-    for (int i = 0; i < LUNGIME_MATRICE_LINIE; i++)
-    {
-        for (int j = 0; j < LUNGIME_MATRICE_COLOANA; j++)
-        {
-            cout << matriceAlbume[i][j];
-        }
-        cout << endl;
-    }
-
-    //Melodie
-    string versuriArray[] = { "I'm Mr. Originality", "Come my way, come and see", "Let me be your fantasy" };
-    //Apelarea constructorului default
-    Melodie melodieImplicita;
-    //Supraincarcarea operatorului >> pentru afisarea obictului de tip Melodie
-    cout << melodieImplicita;
-    //Apelarea constructorului cu 2 parametrii
-    Melodie melodieCuDurataNume(4.10, "TurningTables");
-    cout << melodieCuDurataNume;
-    //Apelarea constructorului cu toti parametrii
-    Melodie mrOriginality(3.20, "MrOriginality", "Simplu", 3, versuriArray);
-    cout << mrOriginality;
-    Melodie copyMelodieImplicita;
-    //Apelarea constructorului de copiere
-    copyMelodieImplicita = melodieImplicita;
-    cout << copyMelodieImplicita;
-    //Getteri si setteri
-    Melodie melodieGetSet;
-    //Set
-    melodieGetSet.setNume("Rolling in the Deep");
-    melodieGetSet.setNumeArtist("Adele");
-    melodieGetSet.setNrVersuri(3);
-    melodieGetSet.setVersuri(versuriArray);
-    //Get
-    cout << "Melodie get & set:" << endl;
-    cout << "Nume melodie: " << melodieGetSet.getNume() << endl;
-    cout << "Nume artist: " << melodieGetSet.getNumeArtist() << endl;
-    cout << "Durata: " << melodieGetSet.getDurata() << " minute" << endl;
-    cout << "Nr. versuri: " << melodieGetSet.getNrVersuri() << endl;
-    string* melodie = melodieGetSet.getVersuri();
-    cout << "Versuri ";
-    for (int i = 0; i < melodieGetSet.getNrVersuri(); i++)
-    {
-        cout << melodie[i] << "\n";
-    }
-    afisareMelodieArist(adele, melodieGetSet);
-    afisareAlbumMelodii(albumulDoi, melodieImplicita);
-
-    cout << "\n\nTotal Melodii: " << Melodie::getNrTotalMelodii() << endl;
-
-    //Supraincarcarea operatorului > pentru a compara durata a doua melodii
-
-    if (melodieCuDurataNume > mrOriginality)
-    {
-        cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mare ca a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
-    }
-    else
-    {
-        cout << "\nDurata melodiei " << melodieCuDurataNume.getNume() << "(" << melodieCuDurataNume.getDurata() << " min)" << " este mai mica fata de cea a melodiei " << mrOriginality.getNume() << "(" << mrOriginality.getDurata() << " min)" << endl << endl;
-
-    }
-    //Supraincarcarea operatorului > pentru a compara daca doua melodii sunt interpretate de acelasi artist
-    if (melodieCuDurataNume != mrOriginality)
-    {
-        cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate artisti diferiti.\n" << endl;
-
-    }
-    else
-    {
-        cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate de acelasi artist, " << mrOriginality.getNumeArtist() << ".\n" << endl;
-
-    }
-
-    //Vector Melodie
-    Melodie vectorMelodii[LUNGIME_VECTOR];
-    cout << "Citirea obiectelor de tip artist:\n\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cin >> vectorMelodii[i];
-    }
-    //afisarea obiectelor din vector
-    cout << "Afisarea obiectelor de tip artist:\n\n";
-    for (int i = 0; i < LUNGIME_VECTOR; i++)
-    {
-        cout << vectorMelodii[i] << endl;
-    }
-
-    Concert c1;
-    cin >> c1;
-    cout << c1;
-    Concert c2;
-    c2 = c1;
 
     return 0;
 }
