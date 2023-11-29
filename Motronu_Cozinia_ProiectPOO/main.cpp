@@ -158,7 +158,7 @@ public:
             }
         }
     }
-   
+
     //Destructor
     ~Artist()
     {
@@ -167,6 +167,137 @@ public:
     }
 };
 int Artist::totalArtisti = 0;
+
+class ArtistColaborator : public Artist
+{
+protected:
+    string* colaborareMelodii;
+    string* colaborareArtisti;
+    int nrArtistiColaborare;
+    int nrMelodiiColaborare;
+
+public:
+    ArtistColaborator() :Artist("Sia", 37)
+    {
+        this->nrArtistiColaborare = 2;
+        this->nrMelodiiColaborare = 2;
+        colaborareMelodii = new string[this->nrMelodiiColaborare]{ "Cheap Thrills", "Genius" };
+        colaborareArtisti = new string[this->nrArtistiColaborare]{ "Sean Paul", "Zayn" };
+    }
+
+    ArtistColaborator(int _nrMelodiiColaborare, string* _colaborareMelodii, int _nrArtistiColaborare, string* _colaborareArtisti) : Artist("Drake", 47), colaborareMelodii(nullptr), colaborareArtisti(nullptr)
+    {
+        this->nrArtistiColaborare = _nrArtistiColaborare;
+        this->nrMelodiiColaborare = _nrMelodiiColaborare;
+        if ((this->nrArtistiColaborare > 0) && (this->nrMelodiiColaborare > 0))
+        {
+            this->colaborareMelodii = new string[this->nrMelodiiColaborare];
+            this->colaborareArtisti = new string[this->nrArtistiColaborare];
+
+            for (int i = 0; i < this->nrMelodiiColaborare; i++)
+            {
+                this->colaborareMelodii[i] = _colaborareMelodii[i];
+            }
+
+            for (int i = 0; i < this->nrArtistiColaborare; i++)
+            {
+                this->colaborareArtisti[i] = _colaborareArtisti[i];
+            }
+        }
+    }
+
+    ArtistColaborator& operator=(const ArtistColaborator& a1)
+    {
+        if (this != &a1)
+        {
+            this->nrArtistiColaborare = a1.nrArtistiColaborare;
+            this->nrMelodiiColaborare = a1.nrMelodiiColaborare;
+            if ((this->nrArtistiColaborare > 0) && (this->nrMelodiiColaborare > 0))
+            {
+                this->colaborareMelodii = new string[this->nrMelodiiColaborare];
+                this->colaborareArtisti = new string[this->nrArtistiColaborare];
+
+                for (int i = 0; i < this->nrMelodiiColaborare; i++)
+                {
+                    this->colaborareMelodii[i] = a1.colaborareMelodii[i];
+                }
+
+                for (int i = 0; i < this->nrArtistiColaborare; i++)
+                {
+                    this->colaborareArtisti[i] = a1.colaborareArtisti[i];
+                }
+            }
+            return *this;
+        }
+
+    }
+
+
+    friend ostream& operator<<(ostream& print, ArtistColaborator& a1)
+    {
+        print << "Nume artist: " << a1.getNume() << "\n" << "Varsta: " << a1.getVarsta() << "\nAn aparitie: " << a1.getAnAparitie() << "\nAvere:" << a1.getAvereEuro() << "M euro\nGenuri muzicale: ";
+        for (int i = 0; i < a1.getNrGenuriMuzicale(); i++)
+        {
+            print << a1.getGenuriMuzicale()[i] << " ";
+        }
+        print << "\nNr artisti colaborare: " << a1.nrArtistiColaborare << "\nArtisti: ";
+        for (int i = 0; i < a1.nrArtistiColaborare; i++)
+        {
+            print << a1.colaborareArtisti[i] << " ";
+        }
+        print << "\nMelodii colaborare: ";
+        for (int i = 0; i < a1.nrMelodiiColaborare; i++)
+        {
+            print << a1.colaborareMelodii[i] << " ";
+        }
+        print << "\n";
+        return print;
+    }
+
+
+
+    //Setteri
+    void setNrArtistiColaborare(int nr)
+    {
+        this->nrArtistiColaborare = nr;
+    }
+    void setNrMelodiiColaborare(int nr)
+    {
+        this->nrMelodiiColaborare = nr;
+    }
+    void setColaborareMelodii(string* melodii)
+    {
+        this->colaborareMelodii = melodii;
+    }
+    void setColaborareArtisti(string* artisti)
+    {
+        this->colaborareArtisti = artisti;
+    }
+
+    //Getteri
+    int getNrArtistiColaborare()
+    {
+        return this->nrArtistiColaborare;
+    }
+    int getNrMelodiiColaborare()
+    {
+        return this->nrMelodiiColaborare;
+    }
+    string* getColaborareMelodii()
+    {
+        return this->colaborareMelodii;
+    }
+    string* getColaborareArtisti()
+    {
+        return this->colaborareArtisti;
+    }
+
+    ~ArtistColaborator()
+    {
+        delete[] this->colaborareArtisti;
+        delete[] this->colaborareMelodii;
+    }
+};
 
 class Melodie;
 
@@ -470,7 +601,54 @@ public:
 };
 int Melodie::nrTotalMelodii = 0;
 
-class Concert 
+class RemixMelodie : Melodie
+{
+protected:
+    float nouaDurata;
+    string numeRemixer;
+
+public:
+    RemixMelodie(float _nouaDurata) : Melodie(_nouaDurata, "Snowman")
+    {
+        this->numeRemixer = "Santa Clause";
+        this->nouaDurata = _nouaDurata;
+    }
+    friend ostream& operator<<(ostream& print, RemixMelodie& r1)
+    {
+        print << "Nume melodie: " << r1.getNume() << "\nNume artist: " << r1.getNumeArtist() << "\nNume remixer: " << r1.numeRemixer << "\nDurata: " << r1.nouaDurata << " minute\nVersuri:\n";
+        for (int i = 0; i < r1.getNrVersuri(); ++i)
+        {
+            print << r1.getVersuri()[i] << "\n";
+        }
+        print << endl;
+        return print;
+    }
+    //Setteri
+    void setNumeRemixer(string nume)
+    {
+        this->numeRemixer = nume;
+    }
+    void setNouaDurata(float durata)
+    {
+        this->nouaDurata = durata;
+    }
+    //Getteri
+    string getNumeRemixer()
+    {
+        return this->numeRemixer;
+    }
+    float getNouaDurata()
+    {
+        return this->nouaDurata;
+    }
+
+    ~RemixMelodie()
+    {
+
+    }
+};
+
+class Concert
 {
 private:
     Artist artist;
@@ -614,7 +792,7 @@ void afisareAlbumMelodii(Album& album, Melodie& melodie)
 //Supraincarcarea operatorului << pentru afisarea obiectului de tip Album
 ostream& operator<<(ostream& print, const Album& album)
 {
-    print <<album.nume << "\n" << album.anLansare << "\n" << album.nrMelodii << "\n" << album.pret << "\n";
+    print << album.nume << "\n" << album.anLansare << "\n" << album.nrMelodii << "\n" << album.pret << "\n";
     for (int i = 0; i < album.nrMelodii; ++i) {
         print << album.numeMelodii[i] << " ";
     }
@@ -874,7 +1052,7 @@ void afisareBinaryMelodii()
     string nume = m1.getNume();
     string numeArtist = m1.getNumeArtist();
     int sizeNume = nume.length();
-    int nrVersuri= m1.getNrVersuri();
+    int nrVersuri = m1.getNrVersuri();
     string* versuri;
     if (nrVersuri > 0)
     {
@@ -889,53 +1067,54 @@ void afisareBinaryMelodii()
         versuri = NULL;
     }
 
-   ifstream afisareBinaryMelodii("melodii.bin", ios::binary);
+    ifstream afisareBinaryMelodii("melodii.bin", ios::binary);
 
-if (afisareBinaryMelodii.is_open())
-{
-    afisareBinaryMelodii.read((char*)&durata, sizeof(float));
-    afisareBinaryMelodii.read((char*)&nrTotalMelodii, sizeof(int));
-    afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
-
-    nume.resize(sizeNume);
-    afisareBinaryMelodii.read(&nume[0], sizeNume);
-
-    afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
-    numeArtist.resize(sizeNume);
-    afisareBinaryMelodii.read(&numeArtist[0], sizeNume);
-
-    afisareBinaryMelodii.read((char*)&nrVersuri, sizeof(int));
-
-    for (int i = 0; i < nrVersuri; i++)
+    if (afisareBinaryMelodii.is_open())
     {
-        int strSize;
-        afisareBinaryMelodii.read((char*)&strSize, sizeof(int));
-        if (strSize > 0)
-        {
-            versuri[i].resize(strSize);
-            afisareBinaryMelodii.read(&versuri[i][0], strSize);
-        }
-    }
+        afisareBinaryMelodii.read((char*)&durata, sizeof(float));
+        afisareBinaryMelodii.read((char*)&nrTotalMelodii, sizeof(int));
+        afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
 
-    afisareBinaryMelodii.close();
+        nume.resize(sizeNume);
+        afisareBinaryMelodii.read(&nume[0], sizeNume);
 
-    cout << "Nume melodie: " << nume << "\nDurata: " << durata << " minutes\nArtist: " << numeArtist
-         << "\nTotal melodii: " << nrTotalMelodii << "\nVersuri: ";
-    if (nrVersuri > 0)
-    {
+        afisareBinaryMelodii.read((char*)&sizeNume, sizeof(int));
+        numeArtist.resize(sizeNume);
+        afisareBinaryMelodii.read(&numeArtist[0], sizeNume);
+
+        afisareBinaryMelodii.read((char*)&nrVersuri, sizeof(int));
+
         for (int i = 0; i < nrVersuri; i++)
         {
-            cout << versuri[i] << " ";
+            int strSize;
+            afisareBinaryMelodii.read((char*)&strSize, sizeof(int));
+            if (strSize > 0)
+            {
+                versuri[i].resize(strSize);
+                afisareBinaryMelodii.read(&versuri[i][0], strSize);
+            }
         }
-    }
 
-    delete[] versuri;
-}
-else
-{
-    cout << "Nu am putut deschide fisierul :(\n";
-    delete[] versuri;
-}
+        afisareBinaryMelodii.close();
+
+        cout << "Nume melodie: " << nume << "\nDurata: " << durata << " minutes\nArtist: " << numeArtist
+            << "\nTotal melodii: " << nrTotalMelodii << "\nVersuri: ";
+        if ((nrVersuri > 0) && (versuri != NULL))
+        {
+            for (int i = 0; i < nrVersuri; i++)
+            {
+                cout << versuri[i] << " ";
+            }
+        }
+
+        delete[] versuri;
+    }
+    else
+    {
+        cout << "Nu am putut deschide fisierul :(\n";
+        delete[] versuri;
+        afisareBinaryMelodii.close();
+    }
 }
 //Citirea datelor de tip binar din fisierul melodii
 void citireBinaryMelodii()
@@ -952,7 +1131,7 @@ void citireBinaryMelodii()
     {
         versuri[i] = m1.getVersuri()[i];
     }
-        ofstream citireBinaryMelodii("melodii.bin", ios::binary);
+    ofstream citireBinaryMelodii("melodii.bin", ios::binary);
 
     if (citireBinaryMelodii.is_open())
     {
@@ -1247,11 +1426,11 @@ int main()
 
     Artist artist5;
     Melodie melodie5;
-    //Afisare artist in fisier text 
+    //Afisare artist in fisier text
     ofstream afisareTextArtisti("artisti.txt", ios::out);
     afisareTextArtisti << artist5;
     //Citire artist din fisier text
-    ifstream citireTextArtisti("artisti.txt", ios::in);   
+    ifstream citireTextArtisti("artisti.txt", ios::in);
     //Afisare melodie in fisier text
     ofstream afisareTextMelodii("melodii.txt", ios::out);
     afisareTextMelodii << melodie5;
@@ -1264,6 +1443,33 @@ int main()
     citireBinaryMelodii();
     afisareBinaryMelodii();
 
+    ArtistColaborator ac1;
+    cout << ac1;
+
+    int nrArtistiColaborare = 2, nrMelodiiColaborare = 2;
+    string* colaborareMelodii = new string[nrMelodiiColaborare];
+    string* colaborareArtisti = new string[nrArtistiColaborare];
+    for (int i = 0; i < nrMelodiiColaborare; i++)
+    {
+        colaborareMelodii[i] = "MelodieColab" + to_string(i + 1);
+    }
+    for (int i = 0; i < nrArtistiColaborare; i++)
+    {
+        colaborareArtisti[i] = "ArtistColab" + to_string(i + 1);
+    }
+
+    ArtistColaborator a2(nrMelodiiColaborare, colaborareMelodii, nrArtistiColaborare, colaborareArtisti);
+    cout << a2;
+
+    delete[] colaborareMelodii;
+    delete[] colaborareArtisti;
+
+    RemixMelodie r1((float)4.15);
+    cout << r1;
+
+    ArtistColaborator ac2;
+    Artist& a14 = ac2; //Upcasting
+    cout << a14;
 
     return 0;
 }
