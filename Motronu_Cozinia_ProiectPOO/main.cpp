@@ -1,12 +1,64 @@
 ﻿#include <iostream>
 #include <string>
 #include <fstream>
+#include <chrono>
+
 using namespace std;
 #define LUNGIME_VECTOR 3
 #define LUNGIME_MATRICE_LINIE 2
 #define LUNGIME_MATRICE_COLOANA 3
 
-class Artist
+class casaDeDiscuri 
+{
+protected:
+    int anInfiintare;
+    string nume;
+
+public:
+    //constructorul default
+    casaDeDiscuri()
+    {
+        this->anInfiintare = 2003;
+        this->nume = "Global Records";
+    }
+
+    //functii virtuale
+    virtual void publicTinta() const = 0; // Metoda virtuala pura pentru afisarea publicului tinta al unui artist
+    virtual void promovare() const = 0; // Metoda virtuala pura pentru promovarea casei de discuri
+
+    ~casaDeDiscuri() 
+    {
+    }
+
+};
+
+class magazinMuzical
+{
+protected:
+    int anInfiintare;
+    string nume;
+
+public:
+    magazinMuzical()
+    {
+        this->anInfiintare = 2010;
+        this->nume = "Bombonica muzicala";
+    }
+
+    virtual void afiseazaInformatii() = 0;
+
+    virtual void vinde() = 0;
+
+    virtual void recomanda() = 0;
+
+    ~magazinMuzical()
+    {
+
+    }
+
+};
+
+class Artist: public casaDeDiscuri
 {
 private:
     const int anAparitie;
@@ -91,7 +143,7 @@ public:
     {
         return this->nume;
     }
-    int getVarsta()
+    int getVarsta() const
     {
         return this->varsta;
     }
@@ -159,6 +211,33 @@ public:
         }
     }
 
+    //implementarea metodei virtuale din clasa casaDeDiscuri
+    void publicTinta() const override {
+        if (this->varsta >= 28)
+        {
+            cout << "Artistul: " << this->nume << " are ca public tinta adultii cu varsta de peste 28 de ani." << endl;
+        }
+        else if (this->varsta < 18)
+        {
+            cout << "Artistul: " << this->nume << " are ca public tinta copiii." << endl;
+        }
+        else
+        {
+            cout << "Artistul: " << this->nume << " este potrivit intregii familii." << endl;
+        }
+
+    }
+
+    void promovare() const override {
+        //aflu anul curent
+        auto timp_curent = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        struct std::tm timp_info;
+        localtime_s(&timp_info, &timp_curent);
+        int an_curent = timp_info.tm_year + 1900;
+
+        cout << "Artistul " << this->nume << " este promovat de casa de discuri, avand o avere de " << this->avereEuro << " Euro obtinuta in cei " << (an_curent - this->anAparitie) << " ani de activitate." << endl;
+    }
+
     //Destructor
     ~Artist()
     {
@@ -168,7 +247,7 @@ public:
 };
 int Artist::totalArtisti = 0;
 
-class ArtistColaborator : public Artist
+class ArtistColaborator : public Artist, public casaDeDiscuri
 {
 protected:
     string* colaborareMelodii;
@@ -292,6 +371,44 @@ public:
         return this->colaborareArtisti;
     }
 
+    //implementarea metodei virtuale din clasa casaDeDiscuri
+    void publicTinta() const override
+    {
+        if (this->getVarsta() >= 28)
+        {
+            cout << "Artistul " << this->getNume() << " are ca public tinta adultii cu varsta de peste 28 de ani, colaborand cu ";
+            for (int i = 0; i < this->nrArtistiColaborare - 1; i++)
+            {
+                cout << this->colaborareArtisti[i] << ",";
+            }
+            cout << this->colaborareArtisti[this->nrArtistiColaborare - 1] << "." << endl;
+        }
+        else if (this->getVarsta() < 18)
+        {
+            cout << "Artistul: " << this->getNume() << " are ca public tinta copiii, colaborand cu ";
+            for (int i = 0; i < this->nrArtistiColaborare - 1; i++)
+            {
+                cout << this->colaborareArtisti[i] << ",";
+            }
+            cout << this->colaborareArtisti[this->nrArtistiColaborare - 1] << "." << endl;
+        }
+        else
+        {
+            cout << "Artistul: " << this->getNume() << " este potrivit intregii familii, colaborand cu ";
+            for (int i = 0; i < this->nrArtistiColaborare - 1; i++)
+            {
+                cout << this->colaborareArtisti[i] << ",";
+            }
+            cout << this->colaborareArtisti[this->nrArtistiColaborare - 1] << "." << endl;
+        }
+    }
+
+    void promovare() const override
+    {
+
+        cout << "Artistul " << this->getNume() << " este promovat de casa de discuri, avand un numar de " << this->nrArtistiColaborare << " artisti cu care a colaborat." << endl;
+    }
+
     ~ArtistColaborator()
     {
         delete[] this->colaborareArtisti;
@@ -301,7 +418,7 @@ public:
 
 class Melodie;
 
-class Album
+class Album : public magazinMuzical
 {
 private:
     const int anLansare;
@@ -440,6 +557,20 @@ public:
     friend ostream& operator<<(ostream& os, const Album& album);
     friend bool operator>(Album& album1, Album& album2);
     friend istream& operator>>(istream& input, Album& album);
+
+    //Implementarea functiilor virtuale
+    void afiseazaInformatii() override {
+        cout << "Album: " << this->nume << "\nAn lansare: " << this->anLansare << endl;
+    }
+
+    void vinde() override {
+        cout << "Vanzare album: " << this->nume << endl;
+    }
+
+    void recomanda() override {
+        cout << "Recomandare album: " << this->nume << endl;
+    }
+    
     //Destructor
     ~Album()
     {
@@ -449,7 +580,8 @@ public:
 };
 int Album::TVA = 19;
 
-class Melodie {
+class Melodie: public magazinMuzical 
+{
 private:
 
     const float durata;
@@ -592,6 +724,19 @@ public:
     friend bool operator!=(Melodie& melodie1, Melodie& melodie2);
     friend istream& operator>>(istream& input, Melodie& melodie);
     friend ifstream& operator>>(ifstream& input, Melodie& melodie);
+
+    //Implementarea metodelor virtuale
+    void afiseazaInformatii() override {
+        cout << "Melodie: " << this->nume << "\nDurata: " << durata << " secunde" << endl;
+    }
+
+    void vinde() override {
+        cout << "Vanzare melodie: " << this->nume << endl;
+    }
+
+    void recomanda() override {
+        cout << "Recomandare melodie: " << this->nume << endl;
+    }
     //Destructor
     ~Melodie()
     {
@@ -893,7 +1038,7 @@ istream& operator>>(istream& input, Melodie& melodie)
     melodie.versuri = _versuri;
     return input;
 }
-//to do
+//Supraincarcarea operatorului >> pentru citirea obiectului de tip Melodie
 ifstream& operator>>(ifstream& input, Melodie& melodie)
 {
     string _nume;
@@ -1470,6 +1615,61 @@ int main()
     ArtistColaborator ac2;
     Artist& a14 = ac2; //Upcasting
     cout << a14;
+
+    //late binding pentru casaDeDiscuri
+    Artist* pointerLaArtist;
+    pointerLaArtist = new Artist();
+    pointerLaArtist->promovare();
+    delete pointerLaArtist;
+
+    string* artistiColaborare = new string[2]{ "Irina Rimes", "Randi" };
+    string* melodiiColaborare = new string[2]{ "The gate", "Xmas party" };
+    pointerLaArtist = new ArtistColaborator(2, melodiiColaborare, 2, artistiColaborare);
+    pointerLaArtist->publicTinta();
+    delete pointerLaArtist;
+
+    casaDeDiscuri** pointeriC;
+    pointeriC = new casaDeDiscuri * [10];
+    pointeriC[0] = new ArtistColaborator(2, melodiiColaborare, 2, artistiColaborare);
+    pointeriC[1] = new Artist("Party at the disco", 23);
+    for (int i = 2; i < 10; i++)
+    {
+        pointeriC[i] = new Artist();
+    }
+    //afisam datele despre artistii setati mai sus
+    for (int i = 0; i < 10; i++)
+    {
+        pointeriC[i]->publicTinta();
+        cout << endl;
+    }
+
+    //late binding pentru magazinMuzical
+    Album* pointerAlbum;
+    pointerAlbum = new Album();
+    pointerAlbum->afiseazaInformatii();
+    cout << endl;
+    delete pointerAlbum;
+
+    string* melodiiDinAlbum = new string[2]{ "SpeakToMe", "Breathe(InTheAir)" };
+    pointerAlbum = new Album("UnNumeInspirat", 2, 13.99, melodiiDinAlbum);
+    pointerAlbum->afiseazaInformatii();
+    cout << endl;
+    delete pointerAlbum;
+
+    magazinMuzical** pointeriM;
+    pointeriM = new magazinMuzical*[10];
+    pointeriM[0] = new Album("TheEndOfTheWorld", 2, 13.99, melodiiDinAlbum);
+    pointeriM[1] = new Melodie(2.19, "AliensOnEarth");
+    for (int i = 2; i < 10; i++)
+    {
+        pointeriM[i] = new Album();
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        pointeriM[i]->afiseazaInformatii();
+        cout << endl;
+    }
 
     return 0;
 }
