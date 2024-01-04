@@ -1213,7 +1213,7 @@ void afisareBinaryMelodii()
     }
 
     ifstream afisareBinaryMelodii("melodii.bin", ios::binary);
-
+    int strSize;
     if (afisareBinaryMelodii.is_open())
     {
         afisareBinaryMelodii.read((char*)&durata, sizeof(float));
@@ -1231,7 +1231,7 @@ void afisareBinaryMelodii()
 
         for (int i = 0; i < nrVersuri; i++)
         {
-            int strSize;
+           
             afisareBinaryMelodii.read((char*)&strSize, sizeof(int));
             if (strSize > 0)
             {
@@ -1311,6 +1311,7 @@ void citireBinaryMelodii()
 
 int main()
 {
+    //--------Faza 1-----------------
     //Artist
     string adeleGenuriMuzicale[] = { "Pop", "Rock" };
     //Apelarea constructorului cu toti parametrii
@@ -1329,7 +1330,9 @@ int main()
     cout << artistCult;
     cout << "Copy constructor:\n";
     cout << copyAdele;
-
+    //----------End Faza 1----------------
+    
+    //--------Faza 2-----------------
     //Getteri si setteri
     Artist artistGetSet;
     //Set
@@ -1351,7 +1354,9 @@ int main()
     {
         cout << artistGenres[i] << " ";
     }
-
+    //--------End Faza 2-----------------
+     
+    //--------Faza 3-----------------
     //Supraincarcarea operatorului > pentru a compara varsta a doi artisti
     cout << endl << endl;
     if (adele > elvis)
@@ -1371,7 +1376,9 @@ int main()
     cout << artistRandom;
 
     cout << "\nTotal artisti: " << Artist::getTotalArtisti() << endl << endl;
+    //--------End Faza 3-----------------
     
+    //--------Faza 4-----------------
     //Vector artist
     Artist vectorArtisti[LUNGIME_VECTOR];
     cout << "Citirea obiectelor de tip artist:\n";
@@ -1385,8 +1392,10 @@ int main()
     {
         cout << vectorArtisti[i] << endl;
     }
+    //--------End Faza 4-----------------
     
 
+    //--------Faza 1-----------------
     //Album
     string numeMelodii[] = { "SpeakToMe", "Breathe(InTheAir)", "BrainDamage" };
     //Apelarea constructorului default
@@ -1408,7 +1417,9 @@ int main()
     albumulTrei.afisare();
     cout << "Copy constructor:\n";
     copyAlbumUnu.afisare();
+    //--------End Faza 1-----------------
 
+    //--------Faza 2-----------------
     //Getteri si setteri
     Album albumGetSet;
     //Set
@@ -1431,8 +1442,9 @@ int main()
     }
 
     cout << "\n\nTVA: " << Album::getTVA() << "%" << endl << endl;
+    //--------End Faza 2-----------------
 
-
+    //--------Faza 3-----------------
     //Supraincarcarea operatorului > pentru a compara numarul de melodii din cele doua albume
     if (albumulUnu > albumulTrei)
     {
@@ -1450,7 +1462,9 @@ int main()
     //Afisarea albumului
     cout << endl;
     cout << readAlbum;
+    //--------End Faza 3-----------------
 
+    //--------Faza 4-----------------
     //Vector Album
     Album vectorAlbume[LUNGIME_VECTOR];
     cout << "Citirea obiectelor de tip album:\n\n";
@@ -1485,7 +1499,9 @@ int main()
         }
         cout << endl;
     }
+    //--------End Faza 4-----------------
 
+    //--------Faza 1-----------------
     //Melodie
     string versuriArray[] = { "I'm Mr. Originality", "Come my way, come and see", "Let me be your fantasy" };
     //Apelarea constructorului default
@@ -1502,6 +1518,9 @@ int main()
     //Apelarea constructorului de copiere
     copyMelodieImplicita = melodieImplicita;
     cout << copyMelodieImplicita;
+    //--------End Faza 1-----------------
+    
+    //--------Faza 2-----------------
     //Getteri si setteri
     Melodie melodieGetSet;
     //Set
@@ -1525,7 +1544,9 @@ int main()
     afisareAlbumMelodii(albumulDoi, melodieImplicita);
 
     cout << "\n\nTotal Melodii: " << Melodie::getNrTotalMelodii() << endl;
+    //--------End Faza 2-----------------
 
+    //--------Faza 3-----------------
     //Supraincarcarea operatorului > pentru a compara durata a doua melodii
 
     if (melodieCuDurataNume > mrOriginality)
@@ -1548,7 +1569,9 @@ int main()
         cout << "Melodiile " << melodieCuDurataNume.getNume() << " si " << mrOriginality.getNume() << "sunt interpretate de acelasi artist, " << mrOriginality.getNumeArtist() << ".\n" << endl;
 
     }
+    //--------End Faza 3-----------------
 
+    //--------Faza 4-----------------
     //Vector Melodie
     Melodie vectorMelodii[LUNGIME_VECTOR];
     cout << "Citirea obiectelor de tip artist:\n\n";
@@ -1562,13 +1585,17 @@ int main()
     {
         cout << vectorMelodii[i] << endl;
     }
+    //--------End Faza 4-----------------
 
+    //--------Faza 5-----------------
     Concert c1;
     cin >> c1;
     cout << c1;
     Concert c2;
     c2 = c1;
+    //--------End Faza 5-----------------
 
+    //--------Faza 6-----------------
     Artist artist5;
     Melodie melodie5;
     //Afisare artist in fisier text
@@ -1588,6 +1615,9 @@ int main()
     citireBinaryMelodii();
     afisareBinaryMelodii();
 
+    //--------End Faza 6-----------------
+
+    //--------Faza 7-----------------
     ArtistColaborator ac1;
     cout << ac1;
 
@@ -1612,11 +1642,15 @@ int main()
     RemixMelodie r1((float)4.15);
     cout << r1;
 
+    //Upcasting
     ArtistColaborator ac2;
-    Artist& a14 = ac2; //Upcasting
+    Artist& a14 = ac2;
     cout << a14;
 
-    //late binding pentru casaDeDiscuri
+    //--------End Faza 7-----------------
+
+    //--------Faza 8-----------------
+    //Late binding pentru casaDeDiscuri
     Artist* pointerLaArtist;
     pointerLaArtist = new Artist();
     pointerLaArtist->promovare();
@@ -1636,14 +1670,14 @@ int main()
     {
         pointeriC[i] = new Artist();
     }
-    //afisam datele despre artistii setati mai sus
+    //Afisez datele despre artistii setati mai sus
     for (int i = 0; i < 10; i++)
     {
         pointeriC[i]->publicTinta();
         cout << endl;
     }
 
-    //late binding pentru magazinMuzical
+    //Late binding pentru magazinMuzical
     Album* pointerAlbum;
     pointerAlbum = new Album();
     pointerAlbum->afiseazaInformatii();
@@ -1670,6 +1704,6 @@ int main()
         pointeriM[i]->afiseazaInformatii();
         cout << endl;
     }
-
+    //--------End Faza 8-----------------
     return 0;
 }
